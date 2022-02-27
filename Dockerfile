@@ -18,13 +18,12 @@ FROM debian:stable-slim
 COPY --from=downloader /app/rportd /usr/local/bin/rportd
 COPY --from=downloader /app/frontend/ /var/lib/rport/docroot
 
-COPY ./start-rportd.sh /usr/local/bin/
-
 RUN useradd -d /var/lib/rport -m -U -r -s /bin/false rport
 RUN mkdir -p /var/log/rport
-RUN chown rport /var/log/rport
-RUN chown rport /var/lib/rport
-RUN chown rport /usr/local/bin/
+RUN echo "{}" > /var/lib/rport/client-auth.json
+RUN chown -R rport /var/log/rport
+RUN chown -R rport /var/lib/rport
+RUN chown -R rport /usr/local/bin/
 USER rport
 
 VOLUME [ "/var/lib/rport/" ]
@@ -32,4 +31,4 @@ VOLUME [ "/var/lib/rport/" ]
 EXPOSE 8080
 EXPOSE 3000
 
-ENTRYPOINT [ "/bin/sh", "/usr/local/bin/start-rportd.sh", "--data-dir", "/var/lib/rport" ]
+ENTRYPOINT [ "/usr/local/bin/rportd", "--data-dir", "/var/lib/rport" ]
